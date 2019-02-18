@@ -27,6 +27,12 @@ func equalsIntArray(value []int, target []int) bool {
 	return true
 }
 
+/**
+l == Level, start from 0
+i == Index of Array
+p == Parent of Node
+Find Parent: 2^l+(i-(i-1)%2)/2-l-1
+*/
 func linerArray2SymmetricTree(array []int) *TreeNode {
 	size := len(array)
 	if size == 0 {
