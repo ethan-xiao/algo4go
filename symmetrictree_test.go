@@ -21,26 +21,52 @@ But the following [1,2,2,null,3,null,3] is not:
 package main
 
 import (
+	"encoding/json"
 	"math"
+	"strings"
 	"testing"
 )
 
 type TreeNode struct {
-	Val   int
-	Left  *TreeNode
-	Right *TreeNode
+	Val   int       `json:"val,omitempty"`
+	Left  *TreeNode `json:"left,omitempty"`
+	Right *TreeNode `json:"right,omitempty"`
 }
 
 func TestSymmetricTree(t *testing.T) {
-	if !isSymmetricTree(array2SymmetricTree([]int{1, 2, 2, 3, 4, 4, 3})) {
+	b, err := json.Marshal(linerArray2SymmetricTree([]int{1, 2, 3}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.EqualFold(string(b), "{\"val\":1,\"left\":{\"val\":2},\"right\":{\"val\":3}}") {
 		t.Fatal()
 	}
-	if isSymmetricTree(array2SymmetricTree([]int{1, 2, 2, -1, 3, -1, 3})) {
+
+	b, err = json.Marshal(linerArray2SymmetricTree([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.EqualFold(string(b), "{\"val\":1,\"left\":{\"val\":2,\"left\":{\"val\":4},\"right\":{\"val\":5,\"left\":{\"val\":8,\"left\":{\"val\":14},\"right\":{\"val\":15}},\"right\":{\"val\":9}}},\"right\":{\"val\":3,\"left\":{\"val\":6,\"left\":{\"val\":10},\"right\":{\"val\":11}},\"right\":{\"val\":7,\"left\":{\"val\":12},\"right\":{\"val\":13}}}}") {
+		t.Fatal()
+	}
+
+	b, err = json.Marshal(linerArray2SymmetricTree([]int{1, 2, 2, 3, 4, 4, 3}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.EqualFold(string(b), "{\"val\":1,\"left\":{\"val\":2,\"left\":{\"val\":3},\"right\":{\"val\":4}},\"right\":{\"val\":2,\"left\":{\"val\":4},\"right\":{\"val\":3}}}") {
+		t.Fatal()
+	}
+
+	if !isSymmetricTree(linerArray2SymmetricTree([]int{1, 2, 2, 3, 4, 4, 3})) {
+		t.Fatal()
+	}
+	if isSymmetricTree(linerArray2SymmetricTree([]int{1, 2, 2, -1, 3, -1, 3})) {
 		t.Fatal()
 	}
 }
 
-func array2SymmetricTree(array []int) *TreeNode {
+func linerArray2SymmetricTree(array []int) *TreeNode {
 	size := len(array)
 	if size == 0 {
 		return nil
@@ -51,17 +77,17 @@ func array2SymmetricTree(array []int) *TreeNode {
 	var p *TreeNode
 	for l, i, j, c := 0.0, 1, 0, 0; i < size; {
 		c = int(math.Pow(2, l+1))
-		for j = 0; j < c; i, j = i+1, j+1 {
+		for j = 0; j < c && i < size; i, j = i+1, j+1 {
 			if array[i] == -1 {
 				continue
 			}
 			p = nodes[int(math.Pow(2, l))+(i-(i-1)%2)/2-int(l)-1]
 			if i%2 == 0 {
-				p.Left = &TreeNode{Val: array[i]}
-				nodes = append(nodes, p.Left)
-			} else {
 				p.Right = &TreeNode{Val: array[i]}
 				nodes = append(nodes, p.Right)
+			} else {
+				p.Left = &TreeNode{Val: array[i]}
+				nodes = append(nodes, p.Left)
 			}
 		}
 		l++
