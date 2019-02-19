@@ -24,12 +24,6 @@ import (
 	"testing"
 )
 
-type TreeNode struct {
-	Val   int       `json:"val,omitempty"`
-	Left  *TreeNode `json:"left,omitempty"`
-	Right *TreeNode `json:"right,omitempty"`
-}
-
 func TestSymmetricTree(t *testing.T) {
 	if !isSymmetricTree(linerArray2SymmetricTree([]int{1, 2, 2, 3, 4, 4, 3})) {
 		t.Fatal()
