@@ -1,7 +1,6 @@
 package main
 
 import (
-	"math"
 	"sort"
 )
 
@@ -28,10 +27,7 @@ func equalsIntArray(value []int, target []int) bool {
 }
 
 /**
-l == Level, start from 0
-i == Index of Array
-p == Parent of Node
-Find Parent: 2^l+(i-(i-1)%2)/2-l-1
+Find Parent: x=i-1; (x-x%2)/2
 */
 func linerArray2SymmetricTree(array []int) *TreeNode {
 	size := len(array)
@@ -42,22 +38,20 @@ func linerArray2SymmetricTree(array []int) *TreeNode {
 	root := &TreeNode{Val: array[0]}
 	nodes = append(nodes, root)
 	var p *TreeNode
-	for l, i, j, c := 0.0, 1, 0, 0; i < size; {
-		c = int(math.Pow(2, l+1))
-		for j = 0; j < c && i < size; i, j = i+1, j+1 {
-			if array[i] == -1 {
-				continue
-			}
-			p = nodes[int(math.Pow(2, l))+(i-(i-1)%2)/2-int(l)-1]
-			if i%2 == 0 {
-				p.Right = &TreeNode{Val: array[i]}
-				nodes = append(nodes, p.Right)
-			} else {
-				p.Left = &TreeNode{Val: array[i]}
-				nodes = append(nodes, p.Left)
-			}
+	x := 0
+	for i := 1; i < size; i++ {
+		if array[i] == -1 {
+			continue
 		}
-		l++
+		x = i - 1
+		p = nodes[int((x-x%2)/2)]
+		if i%2 == 0 {
+			p.Right = &TreeNode{Val: array[i]}
+			nodes = append(nodes, p.Right)
+		} else {
+			p.Left = &TreeNode{Val: array[i]}
+			nodes = append(nodes, p.Left)
+		}
 	}
 	return root
 }
